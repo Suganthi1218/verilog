@@ -1,0 +1,249 @@
+1. How many DFFs will be inferred from the below snippet.
+
+input c, din;
+output reg y3;
+reg y1,y2;
+always@ ( posedge c) begin
+y1 = din;
+y2 = y1;
+y3 = y2;
+end
+
+Ans :
+  1 flipflop
+
+2. How many DFFs will be inferred from the below snippet:
+
+input c,din;
+output reg y3;
+reg y1,y2;
+always@(posedge c)
+begin
+y1 <= din;
+y2 <= y1;
+y3 <= y2;
+end
+
+Ans :
+ 3 flipflop
+
+3. Write RTL code to design a 3-bit SISO right shift register using only a Non-blocking assignment. (Do not use any operators).
+
+module siso(input in,clk,rst,output reg  out);
+reg [2:0] sreg;
+  
+  always @(posedge clk)begin
+    if(rst)begin
+      sreg<=3'b000;
+    out <=0;
+    end
+    else begin
+      
+      sreg<={in,sreg[2:1]};
+      out <= sreg;
+      
+    end
+    
+  end
+endmodule
+
+
+
+module siso_tb;
+  reg in, clk, rst;
+  wire out ;
+  siso so(in,clk,rst,out);
+  initial
+    begin
+      
+      
+      rst=1; clk=0;in=1;
+     #10 rst=0; 
+  in=1;
+      #40 $finish;
+    end
+   always #5 clk=~clk;
+initial
+  begin
+    $monitor("in=%d, out=%d",in,out);
+  end
+  initial
+    begin
+      $dumpfile("siso.vcd");
+      $dumpvars;
+    end
+endmodule
+
+
+
+4. Which of the statements will execute from the below
+snippet & justify the behavior?
+reg c = 3’b00x;
+always@(*)
+begin
+casex( c )
+3’b000:st1;
+3’b100:st2;
+3’b001 : st3;
+endcase
+end
+
+Ans :
+ st1 because casex is unknown value (0 or 1) 0 is first match so the output is 3'b000.
+
+5. Which hardware logic is inferred from the below snippet?
+
+always@(*) begin
+case( 1’b1 ) a[3] : y=3;
+                    a[2] : y = 2;;
+                    a[1] : y = 1;
+                    a[0] : y = 0;
+endcase
+end
+
+Ans:
+priority encoder
+msb has high priority.
+
+6. Write RTL code for designing an 8:1 mux using a for loop.
+
+module mux_8_1 (input [7:0] in, 
+                input [2:0] sel, 
+                output reg out);
+    integer i;
+  always @(*) begin
+      out =0;
+     for (i = 0; i < 8; i=i+1) begin
+                if(sel == i)begin
+                 out = in[i];
+            end
+    end
+  end
+  
+endmodule
+
+7. Write Verilog code for generating an infinite clock signal
+with a 50% Duty cycle having a time period of 10ns using a
+forever loop.
+
+module clkgen(input clk_in);
+endmodule
+
+module clkgen_tb;
+reg clk_in ;
+clkgen c(clk_in);
+initial
+begin 
+clk_in=0;
+forever #10 clk_in=~clk_in;
+end
+endmodule
+
+8. Draw the waveform for the below snippet.
+
+initial
+begin
+#5 clk = 0;
+forever #5clk =~clk; 
+end
+initial
+begin
+rst = 1;
+repeat(3)@(negedge clk);
+rst =0;
+end
+
+
+9. Write RTL code for designing a D latch using a 2:1 mux.
+
+module dlatchusemux(input d,en,output reg q);
+  
+  assign q = (en==0) ? q : d ;
+endmodule
+
+module dlatchusemux_tb;
+  reg d, en;
+  wire q;
+  
+  dlatchusemux uut (d,en,q);
+  initial
+    begin
+     // $monitor("d=%b, en=%b, q=%b",d,en,q):
+      
+      d=0; en=0; 
+      #10 d=0; en=1;
+      #10 d=1; en=0;
+      #10 d=0; en=1;
+      #10 d=1; en=1;
+      
+      #50 $finish;
+    end 
+  
+  initial
+    begin
+      $dumpfile("dlatchusemux.vcd");
+      $dumpvars;
+    end
+endmodule
+      
+
+10. Find the output for the below codes:
+
+1) reg a,b;
+always@(a,b) begin
+#10 a<= 1'b0;
+#1 b<= 1'b1;
+a<= 1;
+#5 b<= a;
+$display($time,"a=%d,b=%",a,b);
+end
+
+Ans :
+ a = 0; b=1;
+
+2) reg a,b;
+always@(a,b) begin
+#10 a = 1'b0;
+#1 b = 1'b1;
+a = 1;
+#5 b = a;
+$display($time,"a=%d,b=%d",a,b);
+end
+
+Ans :
+  a = 1 b=1;
+
+3) reg a,b;
+initial begin
+a=1;
+b=a;
+$display($time,"a=%d,b=%d",a,b);
+end
+initial begin
+#1 a<=1;
+b<=a;
+$display($time,"a=%d,b=%d",a,b);
+end
+
+Ans :
+ 0 a=1 b=1;
+1 a=1,b=1;
+
+11. For the below RTL schematic write the RTL snippet
+
+
+module df(input clk, d,output reg q);
+  always@(posedge clk)begin
+    q<=d;
+  end
+endmodule
+
+
+module df1(input clk,x1,x2,x3, output reg g,f);
+  wire w1,w2;
+  df d1 (.clk(clk),.d(w1),.q(g));
+  df d2 (.clk(clk),.d(w2),.q(f));
+  
+  assign w1 = x1|f;
+  assign w2= x2&x3;
+endmodule
