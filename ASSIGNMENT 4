@@ -1,0 +1,179 @@
+1. What value of a is displayed on the console output? Justify the same.
+reg[1:0]a;
+initial
+begin
+$display($time,“a=%d”,a);
+a =2’d3;
+#10;
+a = 2’d2;
+end
+
+Ans : 
+t=0; a=x;
+
+
+2. What is the value of b displayed on the console output? Justify the same.
+
+reg[1:0]b;
+initial
+begin
+$strobe($time,“b=%d”,b);
+b =2’d3;
+b = 2’dx;
+#10;
+b = 2’d2;
+end
+
+Ans :
+  t=0; b=x;
+
+3. What values are monitored for the variable b till the end of  simulation time? Display the same.
+
+reg[1:0]b;
+initial
+begin
+$monitor($time,“b=%d”,b);
+b = 2’d0;
+b = 2’dx;
+#10;
+b = 2’d2;
+#10;
+
+b = 2’d1;
+$monitoroff;
+#10;
+b = 2’d2;
+$monitoron;
+#10;
+#100 $finish;
+end
+
+Ans:
+                  t=0 b=00
+                  t= 0   b=xx
+                  t=10  b=11
+                  t=20  b=01
+                  t=30  b=11
+
+4. Display the console output for the following.
+
+`timescale 10ns/1ns
+parameter P=15.5;
+reg a;
+initial begin
+$monitor($time,“Value of a = %b”,a);
+ #P a =1’b1;
+#P a = 1’b0;
+end
+
+Ans :
+0 a=x
+155  a=1
+310 a=1
+
+
+5. Display the console output for the following.
+`timescale 10ns/1ns
+parameter P=15.5 ;
+reg a ;
+initial
+begin
+$monitor($realtime,“Value of a = %b”,a);
+#P a = 1’b1;
+#P a = 1’b0;
+end
+
+Ans :
+0 value of  a=x
+155 Value of a = 1
+310 Value of a = 0
+
+
+6. Write Verilog code in order to generate 5 odd random numbers between 1 to 10.
+
+Ans : 
+
+module odd;
+  reg[2:0] out ;
+  integer i;
+  initial begin
+  for(i=1;i<=10;i=i+1)begin
+    if(i%2==1)begin
+   assign out =i;
+      $display("out=%d",out);
+end
+ end
+  end
+
+7. Write RTL code for designing a JK Flip-flop and use the following input states as `define macro: SET,RESET, TOGGLE, HOLD.
+'define set 2'b10
+'define reset 2'b01
+'define toggle 2'b11
+'define hold 2'b00
+
+module jk_flipflop(input j,k,clk,rst,output reg q);
+
+always @ (posedge clk or posedge rst)begin
+
+if(rst)begin
+q<=0;
+end 
+else begin
+case({j,k}) begin
+    set : q<=1;
+    reset : q<=0;
+    toggle : q<=~q;
+    hold : q<=q;
+default : q<=q;
+endcase
+end
+end
+end
+endmodule
+
+
+8. Write Verilog code in order to generate a clock signal of frequency ; 1Ghz. Use the following timescale: `timescale 1us/1ps
+
+module gen_clk(input in_clk);
+endmodule
+
+`timescale 1us/1ps
+module gen_clk_tb;
+  reg in_clk=0;
+ 
+  gen_clk clock(in_clk);
+  always #0.0005 in_clk=~in_clk;
+  
+ #5  $stop;
+  initial begin
+    $dumpfile("clk_gen_tb.vcd");
+    $dumpvars;
+  end
+endmodule
+
+
+  
+9. Find the bug if any in the following File write operation snippet.
+
+module test ;
+
+reg [5:0]channel ;
+reg a ;
+initial
+begin
+channel = $fopen(“file1.txt”);
+$monitor(channel,”a=%b”,a);
+end
+endmodule
+
+Ans : 
+module test ;
+reg [5:0]channel ;
+reg a ;
+initial
+begin
+channel = $fopen("file1.txt","w");
+$fwrite(channel,"a=%b",a);
+$fclose(channel);
+end
+endmodule   
