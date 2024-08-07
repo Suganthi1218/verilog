@@ -1,0 +1,111 @@
+
+
+1. Write RTL (Dataflow) for designing a Half-Subtractor
+      
+ module halfsub(a,b,diff,br);
+
+input a,b;
+output  reg diff,br ;
+
+assign diff = a^b;
+assign br = ~a&b;
+
+endmodule
+
+
+2. Write RTL for designing a 1-bit Full Subtractor using Half-Subtractor
+
+
+module halfsub(a,b,diff,br);
+
+input a,b;
+output  diff,br ;
+
+assign diff = a^b;
+assign br = ~a&b;
+
+endmodule
+
+module fullsubtract(input a,b,c,output reg diff,br);
+
+assign diff = a^b^c;
+
+assign br = (~a&b) | (~(a^b) & c);
+
+endmodule
+
+
+3. Write RTL for designing a 2:1 mux using gate-level abstraction.
+
+module mux_2_1(input sel,i0,i1, output  y);
+wire w1,w2,w3;
+not n1 (w1,sel);
+and x1 (w2,w1,i0);
+and x2 (w3,sel,i1);
+or x3(y,w2,w3);
+endmodule 
+
+
+4. Write RTL for designing a 4:1 mux using 2:l muxes.
+
+module mux_2_1(input sel,i0,i1, output  reg y);
+assign y = sel ? i1 : i0 ;
+endmodule 
+
+module mux_4_1(input s1,s0, i0,i1,i2,i3,output reg y);
+wire w1,w2;
+mux_2_1 m1(s1,i
+
+
+5. Write RTL for designing a 2:4 decoder using Data-flow abstraction.
+
+Ans :
+
+module decoder_2_4(input [1:0] a,output [3:0] y);
+
+assign y[0] = ~a[0]& ~a[0];
+assign y[1] =!a[0] & a[1];
+ 
+
+6. Write RTL for designing a 1:4 demux using Data-flow abstraction.
+module demux1X4 (
+    input wire d,   
+    input wire [1:0] s, 
+    output wire [3:0] y   
+);
+
+assign y[0] = d & ~s[1] & ~s[0];
+assign y[1] = d & ~s[1] & s[0];
+assign y[2] = d & s[1] & ~s[0];
+assign y[3] = d & s[1] & s[0];
+
+endmodule
+
+7. Write RTL for designing a 2:4 decoder using behavior-level abstraction.
+module decoder2to4 (
+    input wire [1:0] a,   
+    output wire [3:0]y   
+);
+
+assign y[0] = ~a[1] & ~a[0];
+assign y[1] = ~a[1] & a[0];
+assign y[2] = a[1] & ~a[0];
+assign y[3] = a[1] & a[0];
+
+endmodule
+8. Design of a glitch-free clock mux: Inputs-&gt; pclk_62_5mhz,
+pclk_250mhz, rate[1:0]; output pclk, When Rate=&#39;b00 Select 62.5MHZ
+Clock; Rate=&#39;b10 Select 250MHZ Clock.
+
+9. Design a negative edge-triggered D flip flop with an active low reset.
+
+Ans :
+
+module dff_neg(input clk,rst,d,output reg q);
+always @ (negedge clk or negedge rst)begin
+  if(!rst)
+  q<=0;
+else 
+q<=q;
+end
+endmodule
